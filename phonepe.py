@@ -1,17 +1,42 @@
-# !pip install streamlit
-# !pip install mysql.ConnectionRefusedError
-# !pip install plotly
-# !pip install os
-# !pip install gitpython
-# !pip install pymysql
-
 import os
 import json
 from PIL import Image
 import pandas as pd
-import mysql.connector
+import mysql.connector as sql
 import streamlit as st
-import plotly.express as px
+import plotly.express as plt
+
+
+import os
+
+# Get the current directory
+current_directory = os.getcwd()
+
+# Define the desired project directory
+project_directory = r'C:\Users\Admin\projects'
+
+# Change the current directory to the project directory
+os.chdir(project_directory)
+
+
+# ********************************************************HEADER CREATION************************************************************************
+# Fetch image from URL
+#************************************************************************************************************************************* 
+# File path to the image
+file_path = r"C:/Users/Admin/projects/guvi pic.png"
+
+# Open the image
+image = Image.open(file_path)
+
+# Display the image and Title
+st.image(image, caption='', width=300)
+
+# Streamlit UI
+st.title('**GUVI PROJECT**')
+st.subheader('**PHONEPE PROJECT**')
+st.write("***********************************************************************************************************************")
+st.balloons()
+
 
 #cloning the data from github
 #os.environ['GIT_PYTHON_REFRESH'] = 'quiet'
@@ -29,7 +54,7 @@ else:
 #******************************************************************************************************************* 
 #  Dataframe of agreegated transactions
 
-path1 = 'C:/Users/premi/Desktop/Premila/projects/Phonepe/pulse/data/aggregated/transaction/country/india/state/'
+path1 = 'C:/Users/Admin/projects/pulse/data/aggregated/transaction/country/india/state/'
 agg_trans_list = os.listdir(path1)
 
 clm1 = {'State':[], 'Year':[], 'Quarter':[],'Transaction_type':[],'Transaction_count':[], 'Transaction_amount':[]}
@@ -71,7 +96,7 @@ print(df_agg_trans)
 # ********************************************************************************
 # data frame of aggregated user
 
-path2 = 'C:/Users/premi/Desktop/Premila/projects/Phonepe/pulse/data/aggregated/user/country/india/state/'
+path2 = 'C:/Users/Admin/projects/pulse/data/aggregated/user/country/india/state/'
 
 agg_user_list = os.listdir(path2)
 
@@ -111,7 +136,7 @@ print(df_agg_user)
 # *****************************************************************************
 # Data frame of map transactions
 
-path3 = 'C:/Users/premi/Desktop/Premila/projects/Phonepe/pulse/data/map/transaction/hover/country/india/state/'
+path3 = 'C:/Users/Admin/projects/pulse/data/map/transaction/hover/country/india/state/'
 map_trans_list = os.listdir(path3)
 
 clm3 = {'State': [], 'Year': [], 'Quarter': [], 'District': [], 'Count': [],
@@ -149,7 +174,7 @@ print(df_map_trans)
 # *****************************************************************************
 # Data frame of map user
 
-path4 = "C:/Users/premi/Desktop/Premila/projects/Phonepe/pulse/data/map/user/hover/country/india/state/"
+path4 = "C:/Users/Admin/projects/pulse/data/map/user/hover/country/india/state/"
 map_user_list = os.listdir(path4)
 
 
@@ -197,7 +222,7 @@ print(df_map_user)
 # ****************************************************************************
 
 # Data frame of top transactions
-path5 = "C:/Users/premi/Desktop/Premila/projects/Phonepe/pulse/data/top/transaction/country/india/state/"
+path5 = "C:/Users/Admin/projects/pulse/data/top/transaction/country/india/state/"
 
 top_trans_list = os.listdir(path5)
 clm5 = {'State': [], 'Year': [], 'Quarter': [], 'Pincode': [], 'Transaction_count': [],
@@ -233,7 +258,7 @@ print(df_top_trans)
 # ********************************************************************************************
 
 # Data frame of top users
-path6 = "C:/Users/premi/Desktop/Premila/projects/Phonepe/pulse/data/top/user/country/india/state/"
+path6 = "C:/Users/Admin/projects/pulse/data/top/user/country/india/state/"
 top_user_list = os.listdir(path6)
 clm6 = {'State': [], 'Year': [], 'Quarter': [], 'Pincode': [],
             'RegisteredUsers': []}
@@ -277,75 +302,87 @@ df_top_user.to_csv('top_user.csv',index=False)
 # Creating connection with MySQL
 # Connecting with SQL
 
-myconn =mysql.connector.connect(
-        host ='localhost',
-        user =  'root',
-        password= 'Jesus@2525',
-        database='youtube'
-        )
+import mysql.connector as sql
+
+# Connecting with SQL
+myconn = sql.connect(
+    host='localhost',
+    user='root',
+    password='Jesus@2525',
+    database='Phonepe'
+)
+
+if myconn.is_connected():
+    print('Connected to MySQL database')
+
 cursor = myconn.cursor()
 mycursor = myconn.cursor(buffered=True)
 
+if myconn.is_connected():
+    print('Connected to MySQL database')
+
 # Creating new database and tables
 
-mycursor.execute("CREATE DATABASE Phonepe")
-mycursor.execute("USE Phonepe")
+mycursor.execute("CREATE DATABASE IF NOT EXISTS phonepe")
+mycursor.execute("USE phonepe") 
+
 
 # Creating agg_trans table
 
-mycursor.execute("create table agg_trans (State varchar(100), Year int, Quarter int, Transaction_type varchar(100), Transaction_count int, Transaction_amount double)")
+mycursor.execute("create table IF NOT EXISTS agg_trans (State varchar(100), Year int, Quarter int, Transaction_type varchar(100), Transaction_count int, Transaction_amount double)")
 
 for i,row in df_agg_trans.iterrows():
-   
-    sql = "INSERT INTO agg_trans VALUES (%s,%s,%s,%s,%s,%s)"
-    mycursor.execute(sql, tuple(row))
+
+    sql1 = "INSERT INTO agg_trans VALUES (%s,%s,%s,%s,%s,%s)"
+
+    mycursor.execute(sql1, tuple(row))
    
     myconn.commit()
 
 # Creating agg_user table
 
-mycursor.execute("create table agg_user (State varchar(100), Year int, Quarter int, Brands varchar(100), Count int, Percentage double)")
+mycursor.execute("create table IF NOT EXISTS agg_user (State varchar(100), Year int, Quarter int, Brands varchar(100), Count int, Percentage double)")
 
 for i,row in df_agg_user.iterrows():
-    sql = "INSERT INTO agg_user VALUES (%s,%s,%s,%s,%s,%s)"
-    mycursor.execute(sql, tuple(row))
+    sql2 = "INSERT INTO agg_user VALUES (%s,%s,%s,%s,%s,%s)"
+    mycursor.execute(sql2, tuple(row))
     myconn.commit()
 
 
 # Creating map_trans table
 
-mycursor.execute("create table map_trans (State varchar(100), Year int, Quarter int, District varchar(100), Count int, Amount double)")
+mycursor.execute("create table IF NOT EXISTS map_trans (State varchar(100), Year int, Quarter int, District varchar(100), Count int, Amount double)")
 
 for i,row in df_map_trans.iterrows():
-    sql = "INSERT INTO map_trans VALUES (%s,%s,%s,%s,%s,%s)"
-    mycursor.execute(sql, tuple(row))
+    sql3 = "INSERT INTO map_trans VALUES (%s,%s,%s,%s,%s,%s)"
+    mycursor.execute(sql3, tuple(row))
     myconn.commit()
 
 # Creating map_user table
 
-mycursor.execute("create table map_user (State varchar(100), Year int, Quarter int, District varchar(100), Registered_user int, App_opens int)")
+mycursor.execute("create table IF NOT EXISTS map_user (State varchar(100), Year int, Quarter int, District varchar(100), Registered_user int, App_opens int)")
 
 for i,row in df_map_user.iterrows():
-    sql = "INSERT INTO map_user VALUES (%s,%s,%s,%s,%s,%s)"
-    mycursor.execute(sql, tuple(row))
+    sql4 = "INSERT INTO map_user VALUES (%s,%s,%s,%s,%s,%s)"
+    mycursor.execute(sql4, tuple(row))
     myconn.commit()
 
 # Creating top_trans table
 
-mycursor.execute("create table top_trans (State varchar(100), Year int, Quarter int, Pincode int, Transaction_count int, Transaction_amount double)")
+mycursor.execute("create table IF NOT EXISTS top_trans (State varchar(100), Year int, Quarter int, Pincode int, Transaction_count int, Transaction_amount double)")
 
 for i,row in df_top_trans.iterrows():
-    sql = "INSERT INTO top_trans VALUES (%s,%s,%s,%s,%s,%s)"
-    mycursor.execute(sql, tuple(row))
+    sql5 = "INSERT INTO top_trans VALUES (%s,%s,%s,%s,%s,%s)"
+    mycursor.execute(sql5, tuple(row))
     myconn.commit()
 
 # Creating top_user table
 
-mycursor.execute("create table top_user (State varchar(100), Year int, Quarter int, Pincode int, Registered_users int)")
+mycursor.execute("create table IF NOT EXISTS top_user (State varchar(100), Year int, Quarter int, Pincode int, Registered_users int)")
 
 for i,row in df_top_user.iterrows():
-    sql = "INSERT INTO top_user VALUES (%s,%s,%s,%s,%s)"
-    mycursor.execute(sql, tuple(row))
+    sql6 = "INSERT INTO top_user VALUES (%s,%s,%s,%s,%s)"
+    mycursor.execute(sql6, tuple(row))
     myconn.commit()
 
 # List of tables
