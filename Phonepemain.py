@@ -1,6 +1,7 @@
 # pip install streamlit-option-menu
 # pip install fontawesome
 # pip install --upgrade mysql-connector-python
+# !pip install mysql-connector-python
 
 
 # Importing Libraries
@@ -12,25 +13,29 @@ import plotly.express as px
 import os
 import json
 from streamlit_option_menu import option_menu
-import streamlit as st
-
 from PIL import Image
 # from fontawesome import icons
+os.environ['GIT_PYTHON_REFRESH'] = 'quiet'
+import git
+from git.repo.base import Repo
 
+# **********************************************************************************************************
 # Setting up page configuration
-icon = Image.open(r"C:\Users\premi\Desktop\Premila\projects\project1data\phonelogo.png")
+
+icon = Image.open(r"C:\Users\Admin\projects\phonepe logo1.png")
 st.set_page_config(page_title= "Phonepe Visualization | By Premila Mohan",
                    page_icon= icon,
                    layout= "wide",
                    initial_sidebar_state= "expanded",
                    menu_items={'About': """# This dashboard app is created by *Premila Mohan*!
                                         Data has been cloned from Phonepe Pulse Github Repo"""})
-
+# **********************************************************************************************************
 # Define custom CSS to change the background color
+
 custom_css = """
 <style>
 body {
-    background-color: #6F36AD; /* Set your desired background color here */
+    background-color: #6F38AD; /* Set your desired background color here */
 }
 </style>
 """
@@ -38,38 +43,25 @@ body {
 # Inject the custom CSS into the Streamlit app
 st.markdown(custom_css, unsafe_allow_html=True)
 
-st.sidebar.header(":wave: :violet[**Welcome to My Phonepe Dashboard**]")
+# *********************************************************************************************************************************************
 
-file_path = r"C:\Users\premi\Desktop\Premila\projects\project1data\guvi pic(1).jpg"
+# Streamlit Dashboard UI
+
+file_path = r"C:\Users\Admin\projects\guvi pic.png"
 
 # Open the image
 image = Image.open(file_path)
 
-# Display the image and Title
-st.image(image, caption='', width=300)
-
-# Streamlit UI
-
-
-import streamlit as st
-
-# Define custom CSS to change the background color
-custom_css = """
-<style>
-body {
-    background-color: #6F36AD; /* Set your desired background color here */
-}
-</style>
-"""
-
-# Inject the custom CSS into the Streamlit app
-st.markdown(custom_css, unsafe_allow_html=True)
-
 st.title('**GUVI PROJECT**')
 st.write("********************************")
 
+# Display the image and Title
+st.image(image, caption='', width=300)
+
+# ***********************************************************************************************************************************************
+
 # # #To clone the Github Pulse repository use the following code
-# # Reference Syntax - Repo.clone_from("Clone Url", "Your working directory")
+# # Reference Syntax - Repo.clone_from("Clone Url", "My working directory")
 
 #cloning the data from github
 #os.environ['GIT_PYTHON_REFRESH'] = 'quiet'
@@ -85,30 +77,32 @@ if not os.path.exists('pulse'):
 else:
         print ('Repository "pulse" already exists. Skipping cloning process.')
 
-# # Creating connection with mysql workbench
-# import mysql.connector as sql
+#******************************************************************************************************************************************
 
-# Connecting with SQL
+# Creating connection with mysql workbench
+
 myconn = sql.connect(
     host='localhost',
     user='root',
     password='Jesus@2525',
-    database='Phonepe'
+    database='phonepe'
+
+
 )
 cursor = myconn.cursor()
 mycursor = myconn.cursor(buffered=True)
 
+# ******************************************************************************************************************************************
 
-
-# # Creating option menu in the side bar
+# Creating option menu in the side bar
 
 with st.sidebar:
-    selected = option_menu("Menu", ["Home","Top Charts","Explore Data","About"], 
+    selected = option_menu("Menu", ["Home","Charts","Data","About"], 
                 icons=["house","graph-up-arrow","bar-chart-line", "exclamation-circle"],
                 menu_icon= "menu-button-wide",
                 default_index=0,
-                styles={"nav-link": {"font-size": "20px", "text-align": "left", "margin": "-2px", "--hover-color": "#6F36AD"},
-                        "nav-link-selected": {"background-color": "#6e13ec"}})
+                styles={"nav-link": {"font-size": "20px", "text-align": "left", "margin": "-2px", "--hover-color": "#6B36AD"},
+                        "nav-link-selected": {"background-color": "#6e14ec"}})
 
 
 # MENU 1 - HOME
@@ -125,12 +119,12 @@ if selected == "Home":
         
 
 # MENU 2 - TOP CHARTS
-if selected == "Top Charts":
+if selected == "Charts":
     st.markdown("## :violet[Top Charts]")
     Type = st.sidebar.selectbox("**Type**", ("Transactions", "Users"))
     colum1,colum2= st.columns([1,1.5],gap="large")
     with colum1:
-        Year = st.slider("**Year**", min_value=2018, max_value=2022)
+        Year = st.slider("**Year**", min_value=2018, max_value=2024)
         Quarter = st.slider("Quarter", min_value=1, max_value=4)
     
     with colum2:
@@ -154,10 +148,10 @@ if selected == "Top Charts":
             df = pd.DataFrame(mycursor.fetchall(), columns=['State', 'Transactions_Count','Total_Amount'])
             fig = px.pie(df, values='Total_Amount',
                              names='State',
-                             title='Top 10',
+                             title='TOP 10',
                              color_discrete_sequence=px.colors.sequential.Agsunset,
                              hover_data=['Transactions_Count'],
-                             labels={'Transactions_Count':'Transactions_Count'})
+                             labels={'No of Transactions':'Transactions_Count'})
 
             fig.update_traces(textposition='inside', textinfo='percent+label')
             st.plotly_chart(fig,use_container_width=True)
@@ -169,8 +163,8 @@ if selected == "Top Charts":
 
             fig = px.pie(df, values='Total_Amount',
                              names='District',
-                             title='Top 10',
-                             color_discrete_sequence=px.colors.sequential.Agsunset,
+                             title='TOP 10',
+                             color_discrete_sequence=px.colors.sequential.Inferno,
                              hover_data=['Transactions_Count'],
                              labels={'Transactions_Count':'Transactions_Count'})
 
@@ -184,7 +178,7 @@ if selected == "Top Charts":
             fig = px.pie(df, values='Total_Amount',
                              names='Pincode',
                              title='Top 10',
-                             color_discrete_sequence=px.colors.sequential.Agsunset,
+                             color_discrete_sequence=px.colors.sequential.Magenta,
                              hover_data=['Transactions_Count'],
                              labels={'Transactions_Count':'Transactions_Count'})
 
@@ -197,8 +191,8 @@ if selected == "Top Charts":
         
         with col1:
             st.markdown("### :violet[Brands]")
-            if Year == 2022 and Quarter in [2,3,4]:
-                st.markdown("#### Sorry No Data to Display for 2022 Qtr 2,3,4")
+            if Year == 2024 and Quarter in [2,3,4]:
+                st.markdown("#### Sorry No Data to Display for 2024 Qtr 2,3,4")
             else:
                 mycursor.execute(f"select brands, sum(count) as Total_Count, avg(percentage)*100 as Avg_Percentage from agg_user where year = {Year} and quarter = {Quarter} group by brands order by Total_Count desc limit 10")
                 df = pd.DataFrame(mycursor.fetchall(), columns=['Brand', 'Total_Users','Avg_Percentage'])
@@ -208,7 +202,7 @@ if selected == "Top Charts":
                              y="Brand",
                              orientation='h',
                              color='Avg_Percentage',
-                             color_continuous_scale=px.colors.sequential.Agsunset)
+                             color_continuous_scale=px.colors.sequential.Viridis)
                 st.plotly_chart(fig,use_container_width=True)   
     
         with col2:
@@ -222,7 +216,7 @@ if selected == "Top Charts":
                          y="District",
                          orientation='h',
                          color='Total_Users',
-                         color_continuous_scale=px.colors.sequential.Agsunset)
+                         color_continuous_scale=px.colors.sequential.Viridis)
             st.plotly_chart(fig,use_container_width=True)
               
         with col3:
@@ -233,7 +227,7 @@ if selected == "Top Charts":
                          values='Total_Users',
                          names='Pincode',
                          title='Top 10',
-                         color_discrete_sequence=px.colors.sequential.Agsunset,
+                         color_discrete_sequence=px.colors.sequential.Viridis,
                          hover_data=['Total_Users'])
             fig.update_traces(textposition='inside', textinfo='percent+label')
             st.plotly_chart(fig,use_container_width=True)
@@ -245,7 +239,7 @@ if selected == "Top Charts":
             fig = px.pie(df, values='Total_Users',
                              names='State',
                              title='Top 10',
-                             color_discrete_sequence=px.colors.sequential.Agsunset,
+                             color_discrete_sequence=px.colors.sequential.Viridis,
                              hover_data=['Total_Appopens'],
                              labels={'Total_Appopens':'Total_Appopens'})
 
@@ -253,8 +247,8 @@ if selected == "Top Charts":
             st.plotly_chart(fig,use_container_width=True)
             
 # MENU 3 - EXPLORE DATA
-if selected == "Explore Data":
-    Year = st.sidebar.slider("**Year**", min_value=2018, max_value=2022)
+if selected == "Data":
+    Year = st.sidebar.slider("**Year**", min_value=2018, max_value=2024)
     Quarter = st.sidebar.slider("Quarter", min_value=1, max_value=4)
     Type = st.sidebar.selectbox("**Type**", ("Transactions", "Users"))
     col1,col2 = st.columns(2)
@@ -267,7 +261,7 @@ if selected == "Explore Data":
             st.markdown("## :violet[Overall State Data - Transactions Amount]")
             mycursor.execute(f"select state, sum(count) as Total_Transactions, sum(amount) as Total_amount from map_trans where year = {Year} and quarter = {Quarter} group by state order by state")
             df1 = pd.DataFrame(mycursor.fetchall(),columns= ['State', 'Total_Transactions', 'Total_amount'])
-            df2 = pd.read_csv(r'C:\Users\premi\Desktop\Premila\projects\project1data\Statenames.csv')
+            df2 = pd.read_csv(r'C:\Users\Admin\projects\Statenames.csv')
             df1.State = df2
 
             fig = px.choropleth(df1,geojson="https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson",
@@ -285,7 +279,7 @@ if selected == "Explore Data":
             st.markdown("## :violet[Overall State Data - Transactions Count]")
             mycursor.execute(f"select state, sum(count) as Total_Transactions, sum(amount) as Total_amount from map_trans where year = {Year} and quarter = {Quarter} group by state order by state")
             df1 = pd.DataFrame(mycursor.fetchall(),columns= ['State', 'Total_Transactions', 'Total_amount'])
-            df2 = pd.read_csv(r'C:\Users\premi\Desktop\Premila\projects\project1data\Statenames.csv')
+            df2 = pd.read_csv(r'C:\Users\Admin\projects\Statenames.csv')
             df1.Total_Transactions = df1.Total_Transactions.astype(int)
             df1.State = df2
 
@@ -347,11 +341,11 @@ if selected == "Explore Data":
         st.markdown("## :violet[Overall State Data - User App opening frequency]")
         mycursor.execute(f"select state, sum(Registered_user) as Total_Users, sum(App_opens) as Total_Appopens from map_user where year = {Year} and quarter = {Quarter} group by state order by state")
         df1 = pd.DataFrame(mycursor.fetchall(), columns=['State', 'Total_Users','Total_Appopens'])
-        df2 = pd.read_csv(r'C:\Users\premi\Desktop\Premila\projects\project1data\Statenames.csv')
+        df2 = pd.read_csv(r'C:\Users\Admin\projects\Statenames.csv')
         df1.Total_Appopens = df1.Total_Appopens.astype(float)
         df1.State = df2
         
-        # BAR CHART TOTAL UERS - DISTRICT WISE DATA 
+        # BAR CHART TOTAL USERS - DISTRICT WISE DATA 
         st.markdown("## :violet[Select any State to explore more]")
         selected_state = st.selectbox("",
                              ('andaman-&-nicobar-islands','andhra-pradesh','arunachal-pradesh','assam','bihar',
